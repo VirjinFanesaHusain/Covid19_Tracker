@@ -6,23 +6,52 @@ import axios from "axios";
 
 
 function App() {
-  const [latest, setLatest] = useState("");
+  const [latest, setLatest] = useState([]);
+  const [results, setResults] = useState([])
 
   useEffect(() => {
     axios
-    .get("https://corona.lmao.ninja/v2/all")
-    .then(res => {
-      setLatest(res.data);
+      .all([
+        axios.get("https://corona.lmao.ninja/v2/all"),
+        axios.get("https://corona.lmao.ninja/v3/covid-19/countries")
+      ])
+    .then(responseArr => {
+      setLatest(responseArr[0].data);
+      setResults(responseArr[1].data);
     })
     .catch(err => {
       console.log(err);
     });
   }, []);
 
+  const countries = results.map(data => {
+    return (
+      <Card
+      bg="light"
+      text="dark"
+      className="text-center"
+      style={{ margin: "10px" }}
+      >
+        <Card.Img variant="top" src={data.countryInfo.flag} />
+        <Card.Body>
+          <Card.Title>{data.Country}</Card.Title>
+          <Card.Text>Cases {data.cases}</Card.Text>
+          <Card.Text>Deaths {data.deaths}</Card.Text>
+          <Card.Text>Recovered {data.recovered}</Card.Text>
+          <Card.Text>Today's Cases {data.todayCases}</Card.Text>
+          <Card.Text>Today's deaths {data.todayDeaths}</Card.Text>
+          <Card.Text>Active {data.active}</Card.Text>
+          <Card.Text>Critical {data.critical}</Card.Text>
+          
+        </Card.Body>
+        </Card> 
+      );
+    });
+
   return (
     <div>
       <CardDeck>
-  <Card 
+    <Card 
     bg="secondary" 
     text="white" 
     className="text-center" 
@@ -33,7 +62,7 @@ function App() {
       <Card.Text>{latest.cases}</Card.Text>
     </Card.Body>
     <Card.Footer>
-      <small >Last updated 3 mins ago</small>
+      <small ></small>
     </Card.Footer>
   </Card>
   <Card bg="danger" 
@@ -46,7 +75,7 @@ function App() {
       <Card.Text>{latest.deaths}</Card.Text>
     </Card.Body>
     <Card.Footer>
-      <small>Last update 3 mins ago</small>
+      <small></small>
     </Card.Footer>
   </Card>
   <Card bg="success" 
@@ -58,10 +87,11 @@ function App() {
       <Card.Text>{latest.recovered}</Card.Text>
     </Card.Body>
     <Card.Footer>
-      <small>Last updated 3 mins ago</small>
+      <small></small>
     </Card.Footer>
   </Card>
 </CardDeck>
+{countries}
 </div>
   );
 }
