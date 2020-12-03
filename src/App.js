@@ -3,11 +3,15 @@ import Card from "react-bootstrap/Card";
 import CardDeck from "react-bootstrap/CardDeck";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
+import CardColumns from "react-bootstrap/CardColumns";
+import Form from "react-bootstrap/Form";
+
 
 
 function App() {
   const [latest, setLatest] = useState([]);
   const [results, setResults] = useState([])
+  const [searchCountry, setSeacrhCountry] = useState("");
 
   useEffect(() => {
     axios
@@ -24,9 +28,13 @@ function App() {
     });
   }, []);
 
-  const countries = results.map(data => {
+  const filterCountry = results.filter(item => {
+    return searchCountry !== "" ? item.country === searchCountry : item;
+  });
+  const countries = filterCountry.map((data, i) => {
     return (
       <Card
+      key={i}
       bg="light"
       text="dark"
       className="text-center"
@@ -91,7 +99,18 @@ function App() {
     </Card.Footer>
   </Card>
 </CardDeck>
-{countries}
+<Form>
+  <Form.Group controlId="formBasicSearch">
+    <Form.Control 
+    type="text" 
+    placeholder="search country" 
+    onChange={e => setSeacrhCountry(e.target.value)}
+    />
+    
+  </Form.Group>
+  </Form>
+<CardColumns>{countries}</CardColumns>
+
 </div>
   );
 }
