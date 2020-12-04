@@ -3,7 +3,7 @@ import Card from "react-bootstrap/Card";
 import CardDeck from "react-bootstrap/CardDeck";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
-import CardColumns from "react-bootstrap/CardColumns";
+import Columns from "react-columns";
 import Form from "react-bootstrap/Form";
 
 
@@ -11,7 +11,7 @@ import Form from "react-bootstrap/Form";
 function App() {
   const [latest, setLatest] = useState([]);
   const [results, setResults] = useState([])
-  const [searchCountry, setSeacrhCountry] = useState("");
+  const [searchCountries, setSearchCountries] = useState("");
 
   useEffect(() => {
     axios
@@ -19,26 +19,29 @@ function App() {
         axios.get("https://corona.lmao.ninja/v2/all"),
         axios.get("https://corona.lmao.ninja/v3/covid-19/countries")
       ])
-    .then(responseArr => {
-      setLatest(responseArr[0].data);
-      setResults(responseArr[1].data);
+        .then(responseArr => {
+          setLatest(responseArr[0].data);
+          setResults(responseArr[1].data);
     })
-    .catch(err => {
-      console.log(err);
+      .catch(err => {
+        console.log(err);
     });
   }, []);
 
-  const filterCountry = results.filter(item => {
-    return searchCountry !== "" ? item.country === searchCountry : item;
+    const filterCountries = results.filter(item => {
+    return searchCountries !== "" 
+      ? item.countries.includes(searchCountries) 
+      : item;
   });
-  const countries = filterCountry.map((data, i) => {
-    return (
+
+    const countries = filterCountries.map((data, i) => {
+      return (
       <Card
-      key={i}
-      bg="light"
-      text="dark"
-      className="text-center"
-      style={{ margin: "10px" }}
+        key={i}
+        bg="light"
+        text="dark"
+        className="text-center"
+        style={{ margin: "10px" }}
       >
         <Card.Img variant="top" src={data.countryInfo.flag} />
         <Card.Body>
@@ -56,27 +59,38 @@ function App() {
       );
     });
 
+    var queries = [
+      {
+        columns: 2,
+        query: "min-width: 500px"
+      },
+      {
+        columns: 3,
+        query: "min-width: 1000px"
+      }
+    ];
+
   return (
     <div>
       <CardDeck>
-    <Card 
-    bg="secondary" 
-    text="white" 
-    className="text-center" 
-    style={{margin: "10px"}}>
+        <Card 
+          bg="secondary" 
+          text="white" 
+          className="text-center" 
+          style={{margin: "10px"}}>
 
-    <Card.Body>
-      <Card.Title>Cases</Card.Title>
-      <Card.Text>{latest.cases}</Card.Text>
-    </Card.Body>
-    <Card.Footer>
-      <small ></small>
+      <Card.Body>
+        <Card.Title>Cases</Card.Title>
+        <Card.Text>{latest.cases}</Card.Text>
+        </Card.Body>
+        <Card.Footer>
+        <small ></small>
     </Card.Footer>
   </Card>
-  <Card bg="danger" 
-    text={"white"} 
-    className="text-center"  
-    style={{margin: "10px"}}>
+    <Card bg="danger" 
+      text={"white"} 
+      className="text-center"  
+      style={{margin: "10px"}}>
     
     <Card.Body>
       <Card.Title>Deaths</Card.Title>
@@ -100,16 +114,16 @@ function App() {
   </Card>
 </CardDeck>
 <Form>
-  <Form.Group controlId="formBasicSearch">
+  <Form.Group controlId="formGroupSearch">
     <Form.Control 
     type="text" 
     placeholder="search country" 
-    onChange={e => setSeacrhCountry(e.target.value)}
+    onChange={e => setSeacrhCountries(e.target.value)}
     />
     
   </Form.Group>
   </Form>
-<CardColumns>{countries}</CardColumns>
+  <Columns queries={queries}>{countries}</Columns>
 
 </div>
   );
