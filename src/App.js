@@ -10,8 +10,9 @@ import Form from "react-bootstrap/Form";
 
 function App() {
   const [latest, setLatest] = useState([]);
-  const [results, setResults] = useState([])
-  const [searchCountry, setSeacrhCountry] = useState("");
+  const [results, setResults] = useState([]);
+  const [searchCountry, setSearchCountry] = useState("");
+ 
 
   useEffect(() => {
     axios
@@ -58,13 +59,15 @@ function App() {
 
   return (
     <div>
+      <br/>
+      <h2 style={{ textAlign: "center"}}> Global </h2>
       <CardDeck>
     <Card 
     bg="secondary" 
     text="white" 
     className="text-center" 
     style={{margin: "10px"}}>
-
+ 
     <Card.Body>
       <Card.Title>Cases</Card.Title>
       <Card.Text>{latest.cases}</Card.Text>
@@ -99,19 +102,21 @@ function App() {
     </Card.Footer>
   </Card>
 </CardDeck>
+<br/>
+      <h2 style={{ textAlign: "center"}}> Countries </h2>
 <Form>
-  <Form.Group controlId="formBasicSearch">
+  <Form.Group controlId="formGroupSearch">
     <Form.Control 
     type="text" 
     placeholder="search country" 
-    onChange={e => setSeacrhCountry(e.target.value)}
+    onChange={e => setSearchCountry(e.target.value)}
     />
     
   </Form.Group>
   </Form>
 <CardColumns>{countries}</CardColumns>
-
 </div>
+ 
   );
 }
 
